@@ -1,38 +1,46 @@
-import { FormEvent, useState } from 'react';
-import styles from './PostComments.module.css';
+import { useState } from "react";
 
-import Comment from '../../models/Comment';
+const PostComments = () => {
+  const [nome, setNome] = useState("");
+  const [comentario, setComentario] = useState("");
+  const [comentarios, setComentarios] = useState<string[]>([]);
 
-const Post = () => {
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [tempComment, setTempComment] = useState('');
-
-    function handleAddComment(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const newComment = new Comment(comments.length, tempComment);
-        setTempComment('');
-        setComments([...comments, newComment]);
+  const adicionarComentario = () => {
+    if (nome && comentario) {
+      setComentarios([...comentarios, `${nome}: ${comentario}`]);
+      setNome("");
+      setComentario("");
     }
+  };
 
-    return (
-        <div>
-            <ul className={styles['post-comments']}>
-                {comments.map(({ comment, id }) => (
-                    <li className={styles['post-comment']} key={id}>
-                        <p className={styles['post-comment-content']}>
-                            {comment}
-                        </p>
-                    </li>
-                ))}
-            </ul>
-            <form onSubmit={handleAddComment} className={styles['post-comments-form']}>
-                <textarea value={tempComment} onChange={e => setTempComment(e.target.value)} required className={styles['post-comments-form-textarea']} />
-                <button type="submit" className={styles['post-comments-form-button']}>
-                    Comentar
-                </button>
-            </form>
-        </div>
-    );
-}
+  return (
+    <div data-testid="lista-comentarios">
+      {comentarios.map((coment, index) => (
+        <p key={index} data-testid="comentario">
+          {coment}
+        </p>
+      ))}
 
-export default Post;
+      <div className="post-comments-form">
+        <input
+          type="text"
+          placeholder="Seu nome"
+          data-testid="input-nome"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+        />
+        <textarea
+          placeholder="Deixe seu comentário"
+          data-testid="input-comentario"
+          value={comentario}
+          onChange={(e) => setComentario(e.target.value)}
+        />
+        <button data-testid="botao-enviar" onClick={adicionarComentario}>
+          Comentar
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default PostComments;
